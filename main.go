@@ -13,10 +13,11 @@ func main() {
 		w.WriteHeader(http.StatusAccepted)
 		w.Write([]byte(`welcome nehal`))
 	})
-	r.HandleFunc("/posts", listPosts).Methods("Get")
-	r.HandleFunc("/posts", addPost).Methods("Post")
-	r.HandleFunc("/posts/{post_id}", updatePost).Methods("Put")
-	r.HandleFunc("/posts/{post_id}", deletePost).Methods("Delete")
+	ps := r.PathPrefix("/posts").Subrouter().StrictSlash(true)
+	ps.HandleFunc("/", listPosts).Methods("Get")
+	ps.HandleFunc("/", addPost).Methods("Post")
+	ps.HandleFunc("/{post_id}", updatePost).Methods("Put")
+	ps.HandleFunc("/{post_id}", deletePost).Methods("Delete")
 	http.ListenAndServe(":9000", r)
 
 }
