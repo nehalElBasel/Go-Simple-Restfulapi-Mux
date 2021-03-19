@@ -7,34 +7,31 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/nehal1992/Go-Simple-Restfulapi-Mux/Models"
 )
 
-type Post struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-var posts []Post
+var posts []Models.Post
 
 func init() {
 	fmt.Println("main init func")
-	posts = []Post{
+	posts = []Models.Post{
 		{1, "nehal"}}
 }
 
 func listPosts(w http.ResponseWriter, r *http.Request) {
-	posts_json, err := json.Marshal(posts)
 	w.Header().Set("Content-type", "application/json")
+	posts_json, err := json.Marshal(posts)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	w.Write(posts_json)
+	//json.NewEncoder(w).Encode(posts)
 }
 
 func addPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
-	var post Post
+	var post Models.Post
 
 	err := json.NewDecoder(r.Body).Decode(&post)
 	if err != nil {
@@ -44,14 +41,12 @@ func addPost(w http.ResponseWriter, r *http.Request) {
 	}
 	post.Id = len(posts) + 1
 	posts = append(posts, post)
-	posts_json, err := json.Marshal(posts)
-
-	w.Write(posts_json)
+	json.NewEncoder(w).Encode(posts)
 
 }
 
 func updatePost(w http.ResponseWriter, r *http.Request) {
-	var post Post
+	var post Models.Post
 	w.Header().Set("Content-type", "application/json")
 	post_id, _ := strconv.Atoi(mux.Vars(r)["post_id"])
 
@@ -67,13 +62,14 @@ func updatePost(w http.ResponseWriter, r *http.Request) {
 			posts[index] = post
 		}
 	}
-	res, err := json.Marshal(posts)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(`{"message":"error in decoding"}`))
-		return
-	}
-	w.Write(res)
+	// res, err := json.Marshal(posts)
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	w.Write([]byte(`{"message":"error in decoding"}`))
+	// 	return
+	// }
+	// w.Write(res)
+	json.NewEncoder(w).Encode(posts)
 }
 func deletePost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
@@ -83,11 +79,12 @@ func deletePost(w http.ResponseWriter, r *http.Request) {
 			posts = append(posts[:index], posts[index+1:]...)
 		}
 	}
-	res, err := json.Marshal(posts)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(`{"message":"error in decoding"}`))
-		return
-	}
-	w.Write(res)
+	// res, err := json.Marshal(posts)
+	// if err != nil {
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	w.Write([]byte(`{"message":"error in decoding"}`))
+	// 	return
+	// }
+	// w.Write(res)
+	json.NewEncoder(w).Encode(posts)
 }
